@@ -188,7 +188,7 @@ class Products extends Component {
   // };
   render() {
     return (
-      <div className="d-flex flex-wrap justify-content-around">
+      <div className="d-flex flex-wrap justify-content-between">
       {this.props.children}
       {console.log("Children"+this.props.children)}
       </div>

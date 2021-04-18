@@ -1,75 +1,92 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import Products from "./../components/Products";
-import { actFectchProductRequest } from "./../actions/index";
+// import{fecthProducts} from "./../actions/index";
 import PropTypes from "prop-types";
-import { actAddToCart } from "./../actions/index";
+import { actAddToCart,actVoteStar } from "./../actions/index";
 import Product from "./../components/product";
+// import {actFetchProducts} from "./../actions/index";
+import {actFectchProductRequest} from "./../actions/index";
 // import callApi from "./../untils/apiCaller";
 class ProductContainer extends Component {
-  constructor() {
-    super();
-    this.state = { products: [] };
+  constructor(props) {
+    super(props);
+    this.state = {isLoading:true};
   }
-  async componentDidMount() {
-    await fetch("https://606efb3f0c054f0017658138.mockapi.io/api/products")
-      .then((res) => res.json())
-      .then((data) => {
-        this.setState({ products: data });
-      })
-      .catch(console.log);
+  componentDidMount() {
+    setTimeout(
+      function() {
+          this.setState({ isLoading: false });
+      }
+      .bind(this),500
+  );
+   this.props.fetchALLProducts();
   }
-  // componentDidMount() {
-  //   this.props.fetchAllProduct();
-  // }
   render() {
-    // var { products } = this.props;
-    var  {products}  = this.state;
-    // console.log("Products" +this.state.products);
+    var { products } = this.props;
+    // var  {products}  = this.state;
+    console.log("Products" +products.length);
+    if(!this.state.isLoading){
     return (
-      <div>
+      <div  className="row  d-flex justify-content-between mx-auto">
         <Products>{this.showProducts(products)}</Products>
+        
       </div>
     );
+    }
+    else{
+      return(<div class="d-flex mx-auto spinner-border text-dark" role="status">
+      <span class="sr-only">Loading...</span>
+      
+    </div>
+    
+        );
+    }
   }
 
   showProducts = (products) => {
     var { match } = this.props;
+    var {voteStar}=this.props;
     console.log("Match" + JSON.stringify(match));
-    var result = null;
-    var { onAddToCart } = this.props;
-    if (products.length > 0) {
-      result = products.map((product, i) => {
-        return (
-          <div key={i} className="content">
-            <Product
-              product={product}
-              match={match}
-              onAddToCart={onAddToCart}
-            />
-          </div>
-        );
-      });
-    }
-    return result;
-  };
-  showProductsCategories(products, idCategory) {
     var result = null;
     var { onAddToCart } = this.props;
     if (products.length > 0) {
       // eslint-disable-next-line array-callback-return
       result = products.map((product, i) => {
-        if (product.productCategory.name === idCategory) {
-          return (
-            <div key={i} className="content">
-              <Product product={product} onAddToCart={onAddToCart} />
-            </div>
-          );
+        if(product.id<10){
+        return (
+          <div key={i} className="content">
+            <Product
+              product={product}
+              match={match}
+              voteStar={voteStar}
+              onAddToCart={onAddToCart}
+            />
+          </div>
+        );
         }
       });
     }
     return result;
-  }
+  };
+  // showProductsCategories(products, idCategory) {
+  //   var result = null;
+  //   var { onAddToCart } = this.props;
+  //   var {fecthProducts}=this.props;
+  //   if (products.length > 0) {
+  //     // eslint-disable-next-line array-callback-return
+  //     result = fecthProducts.map((product, i) => {
+  //       if (product.productCategory.name === idCategory) {
+  //         return (
+  //           <div key={i} className="content">
+  //             <Product product={product} onAddToCart={onAddToCart} />
+  //           </div>
+  //         );
+  //       }
+  //     });
+  //   }
+  //   return result;
+  // }
   // showProducts(products) {
   //   var result = null;
   //   var { onAddToCart } = this.props;
@@ -103,18 +120,19 @@ ProductContainer.propsTypes = {
 const mapStateToProps = (state) => {
   return {
     products: state.products,
-    cart: state.cart,
-  };
-};
-
+  }
+}
 const mapDispatchToProps = (dispatch, props) => {
   return {
     onAddToCart: (product) => {
       dispatch(actAddToCart(product, 1));
     },
-    fetchAllProduct: () => {
+    voteStar: (product,star) => {
+      dispatch(actVoteStar(product, star));
+    },
+    fetchALLProducts: () => {
       dispatch(actFectchProductRequest());
     },
-  };
-};
+  }
+}
 export default connect(mapStateToProps, mapDispatchToProps)(ProductContainer);

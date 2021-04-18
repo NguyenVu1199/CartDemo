@@ -18,6 +18,9 @@ Button{
 .addToCart{
     width: 80px;
 }
+li{
+    list-style: none;
+}
 Button{
     width: 60px;
 }
@@ -64,4 +67,9 @@ Button{
 .total{
     position: absolute;
     margin-left: -90px;
+}
+.user{
+    margin-top: -40px;
+    margin-left: 60px;
+    position: absolute;
 }

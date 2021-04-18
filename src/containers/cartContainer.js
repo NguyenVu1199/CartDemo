@@ -5,26 +5,31 @@ import Cart from "./../components/cart";
 import CartItem from "./../components/cartItem";
 import CartResult from "./../components/cartResult";
 import * as Message from "./../contstans/messages";
-import { actUpdateProductInCart } from "../actions";
+import { actAddCartRequest, actFectchCartsRequest, actUpdateProductInCart } from "../actions";
 import { actClearCart } from "../actions";
 class CartContainer extends Component {
+  // componentDidMount(){
+  //   this.props.onFetchAllCarts();
+  // }
   render() {
     var { cart } = this.props;
     console.log("carts" + this.props.cart);
     console.log("products" + this.props.products);
     return (
-      <Cart>
-        <div>{this.showCartItem(cart)}</div>
-        {this.showtotalMount(cart)}
-      </Cart>
-      
+      <div>
+        <h2 className="d-flex justify-content-center mb-4">Cart</h2>
+        <Cart>
+          <div>{this.showCartItem(cart)}</div>
+          {this.showtotalMount(cart)}
+        </Cart>
+      </div>
     );
   }
   showCartItem = (cart) => {
     var { onUpdateProduct } = this.props;
     console.log("?" + onUpdateProduct);
     var result = Message.cart_empty;
-    if (cart.length > 0 && cart!==[]) {
+    if (cart.length > 0 && cart !== []) {
       result = cart.map((item, index) => {
         return (
           <CartItem
@@ -39,12 +44,16 @@ class CartContainer extends Component {
     return result;
   };
   showtotalMount = (cart) => {
-    var { onClearCart } = this.props;
+    var { onClearCart, onAddCart } = this.props;
     var result = null;
     if (cart.length > 0) {
       result = (
         <div className="w-25">
-          <CartResult cart={cart} clearCart={onClearCart}></CartResult>
+          <CartResult
+            cart={cart}
+            clearCart={onClearCart}
+            onAddCart={onAddCart}
+          ></CartResult>
         </div>
       );
     }
@@ -68,7 +77,7 @@ CartContainer.propsTypes = {
 const mapStateToProps = (state) => {
   return {
     cart: state.cart,
-    products:state.products
+    products: state.products,
   };
 };
 const mapDispatchToProps = (dispatch, props) => {
@@ -76,8 +85,14 @@ const mapDispatchToProps = (dispatch, props) => {
     onUpdateProduct: (product, quantity) => {
       dispatch(actUpdateProductInCart(product, quantity));
     },
+    onFetchAllCarts :()=>{
+      dispatch(actFectchCartsRequest());
+    },
     onClearCart: () => {
       dispatch(actClearCart());
+    },
+    onAddCart: (cart) => {
+      dispatch(actAddCartRequest(cart));
     },
   };
 };

@@ -2,8 +2,8 @@ import React,{Component} from 'react';
 class About extends Component{
     render(){
         return(
-            <div>
-                Đây là trang giới thiệu
+            <div className="row">
+               <div className="col-6"></div>
             </div>
         )
     }
